@@ -36,7 +36,7 @@ def generar_credencial(nie, nombres, apellidos, foto_path=None):
     nombre_archivo = f"{nie}_{nombres.replace(' ', '_')}_{apellidos.replace(' ', '_')}"
     ruta_codigo = generar_codigo(nombre_archivo, nie)
 
-    ANCHO = 420
+    ANCHO = 620
     ALTO = 700
     fondo_color = (255, 255, 255)
 
@@ -54,7 +54,7 @@ def generar_credencial(nie, nombres, apellidos, foto_path=None):
 
     y = 10
 
-    titulo = "CREDENCIAL ESTUDIANTIL"
+    titulo = "COED Thomas Jefferson"
     tw, th = medir_texto(draw, titulo, font_titulo)
     draw.text(((ANCHO - tw) / 2, y), titulo, fill="black", font=font_titulo)
     y += th + 10
@@ -93,7 +93,7 @@ def generar_credencial(nie, nombres, apellidos, foto_path=None):
 
     draw.line([(0, y), (ANCHO, y)], fill="black", width=1)
     y += 10
-    pie_texto = "ESTUDIANTE"
+    pie_texto = "VENCE: 12/2025"
     tw, _ = medir_texto(draw, pie_texto, font_peq)
     draw.text(((ANCHO - tw) / 2, y), pie_texto, fill="black", font=font_peq)
 

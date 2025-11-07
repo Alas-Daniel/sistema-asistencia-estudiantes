@@ -78,5 +78,29 @@
         "fecha": "07/11/2025",
         "hora": "12:20:47",
         "estado": "Muy tarde"
+    },
+    {
+        "nie": "4545555",
+        "nombres": "Juan",
+        "apellidos": "Rovira",
+        "fecha": "07/11/2025",
+        "hora": "14:01:12",
+        "estado": "Muy tarde"
+    },
+    {
+        "nie": "0192022025",
+        "nombres": "Gabriela",
+        "apellidos": "Marquez",
+        "fecha": "07/11/2025",
+        "hora": "15:06:57",
+        "estado": "Muy tarde"
+    },
+    {
+        "nie": "03042025",
+        "nombres": "Manuel Alejandro",
+        "apellidos": "Lopez Obrador",
+        "fecha": "07/11/2025",
+        "hora": "15:34:38",
+        "estado": "Muy tarde"
     }
 ]
