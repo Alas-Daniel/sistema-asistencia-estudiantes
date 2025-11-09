@@ -47,7 +47,6 @@ class HistorialAsistencias(tk.Toplevel):
         self.asistencias = obtener_asistencias(self.master.materia)
         self.mostrar_asistencias(self.asistencias)
 
-
     def mostrar_asistencias(self, lista):
         for item in self.tree.get_children():
             self.tree.delete(item)

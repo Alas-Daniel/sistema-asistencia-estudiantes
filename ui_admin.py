@@ -1,6 +1,4 @@
-# ui_admin.py
 import tkinter as tk
-from tkinter import scrolledtext
 from admin_habilitar import HabilitarAsistencia
 from admin_registro import RegistroAlumno
 from admin_lista import ListaAlumnos

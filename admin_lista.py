@@ -2,8 +2,6 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from gestor_json import obtener_alumnos
 from generador_codigo import generar_credencial, imprimir_credencial
-import os
-from PIL import Image, ImageTk
 
 class ListaAlumnos(tk.Toplevel):
     def __init__(self, master, log_widget=None):
@@ -105,41 +103,30 @@ class ListaAlumnos(tk.Toplevel):
             apellidos = valores[2]
 
             try:
-                foto_path = f"fotos/{nie}.jpg"  # Ruta esperada para la foto
+                foto_path = f"fotos/{nie}.jpg"
                 ruta_guardada = generar_credencial(nie, nombres, apellidos, foto_path)
+                imprimir_credencial(ruta_guardada)
 
-                try: #Intentar imprimir
-                    from generador_codigo import imprimir_credencial
-                    imprimir_credencial(ruta_guardada)
-
-                    messagebox.showinfo(
-                        "Proceso completado",
-                        f" Credencial generada e impresa correctamente para:\n"
-                        f"{nombres} {apellidos}\nNIE: {nie}"
-                    )
-
-                    if self.log_widget:
-                        self.log_widget.insert(
-                            tk.END,
-                            f"  Credencial generada e impresa para {nombres} {apellidos} (NIE: {nie})\n"
-                            f"  Archivo: {ruta_guardada}\n"
-                        )
-
-                except Exception as e:
-                    messagebox.showerror("Error al imprimir", f"No se pudo imprimir automáticamente:\n{str(e)}")
-                    if self.log_widget:
-                        self.log_widget.insert(tk.END, f"  Error al imprimir: {str(e)}\n")
-
-            except Exception as e:
-                messagebox.showerror(
-                    "Error",
-                    f"No se pudo generar la credencial:\n{str(e)}"
+                messagebox.showinfo(
+                    "Éxito",
+                    f"Credencial generada e impresa correctamente para:\n"
+                    f"{nombres} {apellidos}\nNIE: {nie}"
                 )
 
                 if self.log_widget:
                     self.log_widget.insert(
                         tk.END,
-                        f"  Error al generar credencial para {nombres} {apellidos}: {str(e)}\n"
+                        f"Credencial generada e impresa para {nombres} {apellidos} (NIE: {nie})\n"
+                        f"Archivo: {ruta_guardada}\n"
                     )
 
-
+            except Exception as e:
+                messagebox.showerror(
+                    "Error",
+                    f"No se pudo generar o imprimir la credencial para {nombres} {apellidos}:\n{str(e)}"
+                )
+                if self.log_widget:
+                    self.log_widget.insert(
+                        tk.END,
+                        f"Error al generar/imprimir credencial para {nombres} {apellidos}: {str(e)}\n"
+                    )

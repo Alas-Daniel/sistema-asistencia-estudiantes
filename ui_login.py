@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox, PhotoImage
 from ui_admin import AdminApp
-from ui_alumno import AlumnoApp
 from gestor_json import validar_usuario
 
 class AdminLogin(tk.Tk):
