@@ -6,12 +6,12 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet
 
-def generar_pdf_historial(alumno, asistencias):
+def generar_pdf_historial(alumno, asistencias, materia):
     carpeta = "pdfs"
     os.makedirs(carpeta, exist_ok=True)
 
     fecha_actual = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    nombre_archivo = f"{alumno['nie']}_{fecha_actual}.pdf"
+    nombre_archivo = f"{alumno['nie']}_{materia}_{fecha_actual}.pdf"
     ruta_pdf = os.path.join(carpeta, nombre_archivo)
 
     doc = SimpleDocTemplate(
@@ -26,13 +26,15 @@ def generar_pdf_historial(alumno, asistencias):
     styles = getSampleStyleSheet()
     contenido = []
 
-    titulo = Paragraph("Historial de Asistencias", styles["Title"])
+    # Título con la materia
+    titulo = Paragraph(f"Historial de Asistencias - {materia}", styles["Title"])
     contenido.append(titulo)
     contenido.append(Spacer(1, 0.3 * inch))
 
     datos_alumno = f"""
     <b>NIE:</b> {alumno['nie']}<br/>
     <b>Nombre:</b> {alumno['nombres']} {alumno['apellidos']}<br/>
+    <b>Materia:</b> {materia}<br/>
     <b>Fecha de generación:</b> {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}
     """
     contenido.append(Paragraph(datos_alumno, styles["Normal"]))

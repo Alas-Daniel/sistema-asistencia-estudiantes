@@ -6,15 +6,16 @@ from admin_registro import RegistroAlumno
 from admin_lista import ListaAlumnos
 from admin_historial import HistorialAsistencias
 
-
 class AdminApp(tk.Tk):
-    def __init__(self, admin_name="Administrador"):
+    def __init__(self, admin_name="Administrador", materia=""):
         super().__init__()
-        self.title("Panel de Administración - Sistema de Asistencia")
+        self.title(f"Panel de Administración - {materia.capitalize() if materia else 'Sistema de Asistencia'}")
         self.geometry("700x500")
         self.resizable(False, False)
         self.configure(bg="#F2F2F2")
+
         self.admin_name = admin_name
+        self.materia = materia
 
         tk.Label(
             self,
@@ -24,13 +25,29 @@ class AdminApp(tk.Tk):
             fg="#000000"
         ).pack(pady=(20, 5))
 
+        if self.materia:
+            tk.Label(
+                self,
+                text=f"Materia asignada: {self.materia.capitalize()}",
+                bg="#F2F2F2",
+                font=("Arial", 14, "italic"),
+                fg="#333333"
+            ).pack(pady=(0, 20))
+        else:
+            tk.Label(
+                self,
+                text="(Sin materia asignada)",
+                bg="#F2F2F2",
+                font=("Arial", 14, "italic"),
+                fg="#333333"
+            ).pack(pady=(0, 20))
+
         tk.Label(
             self,
-            text="OPCIONES: ",
+            text="OPCIONES:",
             bg="#F2F2F2",
             font=("Arial", 16, "bold")
         ).pack(pady=(0, 20))
-
 
         btn_style = {"font": ("Arial", 12), "width": 50, "height": 2, "relief": "flat"}
 
@@ -58,7 +75,7 @@ class AdminApp(tk.Tk):
 
     def abrir_habilitar(self):
         self.withdraw() 
-        HabilitarAsistencia(self)
+        HabilitarAsistencia(self, materia=self.materia)
 
     def abrir_registro(self):
         self.withdraw() 
@@ -80,4 +97,3 @@ class AdminApp(tk.Tk):
         self.destroy()
         login_app = AdminLogin()
         login_app.mainloop()
-

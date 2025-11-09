@@ -58,12 +58,14 @@ class RegistroAlumno(tk.Toplevel):
             messagebox.showwarning("Aviso", "Todos los campos son obligatorios.")
             return
         
-        agregar_alumno(nie, nombres, apellidos)
+        exito = agregar_alumno(nie, nombres, apellidos)
+        if not exito:
+            messagebox.showerror("Error", f"Ya existe un alumno registrado con el NIE {nie}.")
+            return
 
         try:
-            ruta_credencial = generar_credencial(nie, nombres, apellidos) #Generar
-            imprimir_credencial(ruta_credencial) #Imprimir
-
+            ruta_credencial = generar_credencial(nie, nombres, apellidos)
+            imprimir_credencial(ruta_credencial)
         except Exception as e:
             messagebox.showerror("Error", f"No se pudo generar o imprimir la credencial:\n{e}")
             return
@@ -74,7 +76,6 @@ class RegistroAlumno(tk.Toplevel):
             self.log_widget.insert(tk.END, f"Alumno agregado: {nie} | {nombres} {apellidos}\n")
 
         self.limpiar_campos()
-
 
     def limpiar_campos(self):
         self.entry_nie.delete(0, tk.END)

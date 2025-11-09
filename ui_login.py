@@ -10,10 +10,10 @@ class AdminLogin(tk.Tk):
         self.title("Login Administrador")
         self.geometry("400x430")
         self.resizable(False, False)
-        self.configure(bg="#d9d9d9")  
+        self.configure(bg="#d9d9d9")
 
         try:
-            self.iconbitmap("sources/user.ico") #icono central
+            self.iconbitmap("sources/user.ico")
         except Exception as e:
             print("No se pudo cargar el ícono:", e)
 
@@ -51,9 +51,11 @@ class AdminLogin(tk.Tk):
         usuario_valido = validar_usuario(usuario, password, rol="administrador")
 
         if usuario_valido:
-            nombre_admin = usuario_valido["name"]  
+            nombre_admin = usuario_valido["name"]
+            materia_admin = usuario_valido.get("materia", "general")
+
             self.destroy()
-            app = AdminApp(admin_name=nombre_admin)
+            app = AdminApp(admin_name=nombre_admin, materia=materia_admin)
             app.mainloop()
         else:
             messagebox.showerror("Error", "Usuario o contraseña incorrectos", parent=self)

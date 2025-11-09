@@ -3,22 +3,36 @@ from tkinter import ttk, messagebox
 from datetime import datetime
 import gestor_json as db
 
+HORARIOS_MATERIA = {
+    "programacion": (7, 0),
+    "matematica": (9, 0),
+}
+
 class HabilitarAsistencia(tk.Toplevel):
-    def __init__(self, master):
+    def __init__(self, master, materia):
         super().__init__(master)
         self.title("Habilitar Asistencia")
         self.geometry("850x650")
         self.resizable(False, False)
         self.configure(bg="#D1D1D1")
-
+        self.materia = materia
+        
+        hora_materia = HORARIOS_MATERIA.get(materia.lower(), (7, 0))
+        self.hora_limite = hora_materia
+        
         tk.Label(self, text="ALUMNOS REGISTRADOS", bg="#D1D1D1",
                  font=("Arial", 14, "bold")).pack(pady=(30, 20))
         
         tk.Label(self, text="Pase su credencial en el escaner para marcar asistencia", bg="#D1D1D1",
                  font=("Arial", 13, "normal")).pack(pady=(0, 15))
         
-        tk.Label(self, text="Hora de entrada: 7:00 am", bg="#D1D1D1",
-                 font=("Arial", 13, "normal")).pack(pady=(0, 15))
+        self.hora_label_entrada = tk.Label(
+            self,
+            text=f"Hora de entrada: {self.hora_limite[0]:02d}:{self.hora_limite[1]:02d} am",
+            bg="#D1D1D1",
+            font=("Arial", 13, "normal")
+        )
+        self.hora_label_entrada.pack(pady=(0, 15))
         
         frame_entrada = tk.Frame(self, bg="#D1D1D1")
         frame_entrada.pack(pady=(0, 20))
@@ -94,7 +108,7 @@ class HabilitarAsistencia(tk.Toplevel):
 
     def generar_reporte_dia(self):
         fecha_actual = datetime.now().strftime("%d/%m/%Y")
-        ruta_pdf = db.generar_pdf_asistencias_dia(fecha_actual)
+        ruta_pdf = db.generar_pdf_asistencias_dia(fecha_actual, self.materia)
         if ruta_pdf:
             messagebox.showinfo("Éxito", f"Reporte generado correctamente:\n{ruta_pdf}")
         else:
@@ -107,7 +121,7 @@ class HabilitarAsistencia(tk.Toplevel):
         
     def cargar_asistencias_del_dia(self): #Mostrar asistencias
         fecha_actual = datetime.now().strftime("%d/%m/%Y")
-        asistencias = db.obtener_asistencias_por_fecha(fecha_actual)
+        asistencias = db.obtener_asistencias_por_fecha(fecha_actual, self.materia)
 
         for asistencia in asistencias:
             if asistencia["estado"] == "A tiempo":
@@ -125,7 +139,6 @@ class HabilitarAsistencia(tk.Toplevel):
                 asistencia["estado"]
             ), tags=(tag,))
 
-    
     def procesar_codigo(self, event):
         codigo = self.entrada_codigo.get().strip()
         
@@ -136,7 +149,7 @@ class HabilitarAsistencia(tk.Toplevel):
         if alumno:
             fecha_actual = datetime.now().strftime("%d/%m/%Y")
             
-            if db.ya_registro_hoy(codigo, fecha_actual): # verificar si ya registró ho
+            if db.ya_registro_hoy(codigo, fecha_actual, self.materia): # verificar si ya registró ho
                 messagebox.showwarning("Advertencia", 
                                       f"{alumno['nombres']} {alumno['apellidos']} ya registró asistencia hoy")
                 self.entrada_codigo.delete(0, tk.END)
@@ -151,8 +164,10 @@ class HabilitarAsistencia(tk.Toplevel):
                 alumno['apellidos'],
                 fecha_actual,
                 hora_actual.strftime("%H:%M:%S"),
-                estado
+                estado,
+                self.materia
             )
+
             self.agregar_registro(alumno, hora_actual, estado)
             
         else:
@@ -161,11 +176,15 @@ class HabilitarAsistencia(tk.Toplevel):
         self.entrada_codigo.delete(0, tk.END)
     
     def calcular_estado(self, hora):
-        hora_limite = hora.replace(hour=7, minute=0, second=0)
+        hora_limite = hora.replace(
+            hour=self.hora_limite[0],
+            minute=self.hora_limite[1],
+            second=0
+        )
         
         if hora <= hora_limite:
             return "A tiempo"
-        elif hora <= hora_limite.replace(minute=15):
+        elif hora <= hora_limite.replace(minute=self.hora_limite[1]+15):
             return "Tarde"
         else:
             return "Muy tarde"

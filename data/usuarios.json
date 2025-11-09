@@ -4,13 +4,14 @@
         "password": "1234",
         "name": "Daniel Palacios",
         "rol": "administrador",
-        "materia": "matematica"
+        "materia": "programacion"
     },
     {
         "usuario": "admin2",
         "password": "9999",
         "name": "Carlos Villa",
-        "rol": "administrador"
+        "rol": "administrador",
+        "materia": "matematica"
     }
 ]
 

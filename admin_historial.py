@@ -44,8 +44,9 @@ class HistorialAsistencias(tk.Toplevel):
         self.mostrar_todo()
 
     def mostrar_todo(self):
-        self.asistencias = obtener_asistencias()
+        self.asistencias = obtener_asistencias(self.master.materia)
         self.mostrar_asistencias(self.asistencias)
+
 
     def mostrar_asistencias(self, lista):
         for item in self.tree.get_children():
@@ -83,7 +84,7 @@ class HistorialAsistencias(tk.Toplevel):
             messagebox.showinfo("Sin datos", "No hay asistencias para exportar.")
             return
 
-        ruta = generar_pdf_historial(alumno, asistencias_filtradas)
+        ruta = generar_pdf_historial(alumno, asistencias_filtradas, self.master.materia)
         messagebox.showinfo("PDF generado", f"El PDF fue guardado en:\n{ruta}")
 
     def regresar(self):
