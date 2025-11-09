@@ -4,14 +4,13 @@ from ui_admin import AdminApp
 from ui_alumno import AlumnoApp
 from gestor_json import validar_usuario
 
-class AdminLogin(tk.Toplevel):
-    def __init__(self, master):
-        super().__init__(master)
+class AdminLogin(tk.Tk):
+    def __init__(self):
+        super().__init__()
         self.title("Login Administrador")
         self.geometry("400x430")
         self.resizable(False, False)
         self.configure(bg="#d9d9d9")  
-        self.master = master
 
         try:
             self.iconbitmap("sources/user.ico") #icono central
@@ -54,7 +53,6 @@ class AdminLogin(tk.Toplevel):
         if usuario_valido:
             nombre_admin = usuario_valido["name"]  
             self.destroy()
-            self.master.destroy()
             app = AdminApp(admin_name=nombre_admin)
             app.mainloop()
         else:

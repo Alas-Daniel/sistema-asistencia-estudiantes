@@ -33,8 +33,10 @@ class HabilitarAsistencia(tk.Toplevel):
         self.entrada_codigo.pack(padx=5, pady=5)
         self.entrada_codigo.focus_force()
         self.entrada_codigo.bind("<Key>", self.bloquear_teclado)
-        self.entrada_codigo.bind("<Return>", self.procesar_codigo)
-        
+        #self.entrada_codigo.bind("<Return>", self.procesar_codigo)
+        self.entrada_codigo.bind("<KeyRelease>", self.detectar_fin_de_scan)
+        self.after_id = None 
+
         frame_tabla = tk.Frame(self, bg="#D1D1D1")
         frame_tabla.pack(padx=40, pady=(0, 20), fill="both", expand=True)
         
@@ -77,24 +79,58 @@ class HabilitarAsistencia(tk.Toplevel):
         tk.Label(frame_footer, text=f"Fecha: {fecha_actual}", bg="#d9d9d9",
                  font=("Arial", 10, "normal")).pack(side="left")
         
+        tk.Button(frame_footer, text="Generar PDF del día", bg="#4CAF50", fg="white",
+          font=("Arial", 11, "bold"), relief="flat",
+          activebackground="#45A049", activeforeground="white",
+          command=self.generar_reporte_dia).pack(side="right", padx=10)
+
         tk.Button(frame_footer, text="Regresar", bg="#DB1714", fg="black", # Regresar
                   font=("Arial", 11, "bold"),
                   relief="flat", activebackground="#C21210", activeforeground="white",
                   command=self.regresar).pack(side="right", padx=10)
         
         self.actualizar_hora()
-        
+        self.cargar_asistencias_del_dia()
+
+    def generar_reporte_dia(self):
+        fecha_actual = datetime.now().strftime("%d/%m/%Y")
+        ruta_pdf = db.generar_pdf_asistencias_dia(fecha_actual)
+        if ruta_pdf:
+            messagebox.showinfo("Éxito", f"Reporte generado correctamente:\n{ruta_pdf}")
+        else:
+            messagebox.showwarning("Sin registros", "No hay asistencias registradas para hoy.")
+
     def actualizar_hora(self):
         hora_actual = datetime.now().strftime("%H:%M:%S")
         self.hora_label.config(text=f"Hora Local: {hora_actual}")
         self.after(1000, self.actualizar_hora)
+        
+    def cargar_asistencias_del_dia(self): #Mostrar asistencias
+        fecha_actual = datetime.now().strftime("%d/%m/%Y")
+        asistencias = db.obtener_asistencias_por_fecha(fecha_actual)
+
+        for asistencia in asistencias:
+            if asistencia["estado"] == "A tiempo":
+                tag = "a_tiempo"
+            elif asistencia["estado"] == "Tarde":
+                tag = "tarde"
+            else:
+                tag = "muy_tarde"
+
+            nombre_completo = f"{asistencia['nombres']} {asistencia['apellidos']}"
+            self.tabla.insert("", 0, values=(
+                asistencia["nie"],
+                nombre_completo,
+                asistencia["hora"],
+                asistencia["estado"]
+            ), tags=(tag,))
+
     
     def procesar_codigo(self, event):
         codigo = self.entrada_codigo.get().strip()
         
         if not codigo:
             return
-        
         alumno = db.buscar_alumno_por_nie(codigo)
         
         if alumno:
@@ -117,7 +153,6 @@ class HabilitarAsistencia(tk.Toplevel):
                 hora_actual.strftime("%H:%M:%S"),
                 estado
             )
-            
             self.agregar_registro(alumno, hora_actual, estado)
             
         else:
@@ -151,7 +186,6 @@ class HabilitarAsistencia(tk.Toplevel):
             estado
         ), tags=(tag,))
         
-        # Sonido
         self.bell()
     
     def bloquear_teclado(self, event):
@@ -160,6 +194,17 @@ class HabilitarAsistencia(tk.Toplevel):
         if len(event.char) == 1 and event.char.isprintable():
             if event.keycode != 0 and not event.state & 0x0004:
                 return  
+
+    def detectar_fin_de_scan(self, event):
+        if self.after_id:
+            self.after_cancel(self.after_id)
+        
+        self.after_id = self.after(200, self.procesar_si_completo)
+
+    def procesar_si_completo(self):
+        codigo = self.entrada_codigo.get().strip()
+        if codigo:
+            self.procesar_codigo(None)
 
     def regresar(self):
         self.destroy()

@@ -124,3 +124,48 @@ def generar_pdf_asistencia(nie):
 
     doc.build(story)
     return ruta_pdf
+
+def obtener_asistencias_por_fecha(fecha):
+    asistencias = cargar_datos(RUTA_ASISTENCIAS)
+    return [a for a in asistencias if a.get("fecha") == fecha]
+
+def generar_pdf_asistencias_dia(fecha):
+    asistencias = cargar_datos(RUTA_ASISTENCIAS)
+    asistencias_dia = [a for a in asistencias if a.get("fecha") == fecha]
+    
+    if not asistencias_dia:
+        return None
+
+    fecha_nombre = fecha.replace("/", "-")
+    nombre_pdf = f"asistencias_{fecha_nombre}.pdf"
+    ruta_pdf = os.path.join(PDF_DIR, nombre_pdf)
+
+    doc = SimpleDocTemplate(ruta_pdf, pagesize=letter,
+                            leftMargin=50, rightMargin=50, topMargin=50, bottomMargin=50)
+    story = []
+    styles = getSampleStyleSheet()
+
+    story.append(Paragraph("REPORTE DE ASISTENCIAS DEL DÍA", styles["Title"]))
+    story.append(Spacer(1, 12))
+    story.append(Paragraph(f"<b>Fecha:</b> {fecha}", styles["Normal"]))
+    story.append(Spacer(1, 12))
+
+    data = [["NIE", "Nombre", "Hora", "Estado"]]
+    for a in asistencias_dia:
+        nombre_completo = f"{a['nombres']} {a['apellidos']}"
+        data.append([a["nie"], nombre_completo, a["hora"], a["estado"]])
+
+    table = Table(data, colWidths=[100, 200, 100, 100])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#d3d3d3")),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold')
+    ]))
+    story.append(table)
+
+    story.append(Spacer(1, 20))
+    story.append(Paragraph("Generado automáticamente por el sistema de asistencia", styles["Normal"]))
+
+    doc.build(story)
+    return ruta_pdf

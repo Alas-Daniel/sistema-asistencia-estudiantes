@@ -102,5 +102,21 @@
         "fecha": "07/11/2025",
         "hora": "15:34:38",
         "estado": "Muy tarde"
+    },
+    {
+        "nie": "0182022025",
+        "nombres": "Edward Edenilson",
+        "apellidos": "Martinez Rodriguez",
+        "fecha": "09/11/2025",
+        "hora": "14:25:22",
+        "estado": "Muy tarde"
+    },
+    {
+        "nie": "0304022025",
+        "nombres": "Katherine Jeanette",
+        "apellidos": "Hernandez Canizalez",
+        "fecha": "09/11/2025",
+        "hora": "14:31:32",
+        "estado": "Muy tarde"
     }
 ]

@@ -3,7 +3,8 @@
         "usuario": "admin1",
         "password": "1234",
         "name": "Daniel Palacios",
-        "rol": "administrador"
+        "rol": "administrador",
+        "materia": "matematica"
     },
     {
         "usuario": "admin2",

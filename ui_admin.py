@@ -6,11 +6,13 @@ from admin_registro import RegistroAlumno
 from admin_lista import ListaAlumnos
 from admin_historial import HistorialAsistencias
 
+
 class AdminApp(tk.Tk):
     def __init__(self, admin_name="Administrador"):
         super().__init__()
         self.title("Panel de Administración - Sistema de Asistencia")
         self.geometry("700x500")
+        self.resizable(False, False)
         self.configure(bg="#F2F2F2")
         self.admin_name = admin_name
 
@@ -72,9 +74,10 @@ class AdminApp(tk.Tk):
         self.withdraw() 
         log_widget = getattr(self, "text_log", None)
         HistorialAsistencias(self, log_widget=log_widget)
-
+    
     def cerrar_sesion(self):
-        self.withdraw()
-        from ui_login import LoginApp
-        app = LoginApp()
-        app.mainloop()
+        from ui_login import AdminLogin
+        self.destroy()
+        login_app = AdminLogin()
+        login_app.mainloop()
+
